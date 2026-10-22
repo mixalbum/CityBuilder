@@ -109,6 +109,7 @@ npm test                                     # unit tests
 
 ## Data and licences
 
+- **Code:** the CityBuilder source code is under the [MIT License](LICENSE).
 - **Map data** © [OpenStreetMap contributors](https://www.openstreetmap.org/copyright), available under the [ODbL](https://opendatacommons.org/licenses/odbl/). The viewer shows the attribution; keep it when you publish a city.
 - **Terrain:** [Terrain Tiles](https://registry.opendata.aws/terrain-tiles/) on AWS (Mapzen; sources include SRTM, GMTED, ETOPO1 and national elevation models). See their attribution requirements.
 - **Melbourne building footprints** © City of Melbourne, [CC BY](https://data.melbourne.vic.gov.au/).
