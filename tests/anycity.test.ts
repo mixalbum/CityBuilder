@@ -10,7 +10,7 @@ import type { FacadeStyle } from '../pipeline/gen/facades';
 import { pickAutoLandmarks } from '../pipeline/gen/landmarks/auto';
 import { addShapedRoof, parseRoofShape } from '../pipeline/gen/roofShapes';
 import { estimateGridAngle, Projector } from '../pipeline/geo/project';
-import { mergeOsm, tileBBox, type BBox } from '../pipeline/fetch/overpass';
+import { mergeOsm, splitBBox, tileBBox, type BBox } from '../pipeline/fetch/overpass';
 import { terrariumHeight } from '../pipeline/fetch/dem';
 import { areaKind, RoadClassifier, type Area, type Building, type Ring } from '../pipeline/model/features';
 import { decodePng } from '../pipeline/util/png';
@@ -120,6 +120,12 @@ describe('downloads', () => {
     expect(tiles.length).toBe(9);
     expect(Math.min(...tiles.map((t) => t[0]))).toBe(box[0]);
     expect(Math.max(...tiles.map((t) => t[3]))).toBeCloseTo(box[3]);
+  });
+
+  it('quarters a slow tile exactly', () => {
+    const q = splitBBox([0, 0, 2, 4]);
+    expect(q).toHaveLength(4);
+    expect(q.reduce((a, [s, w, n, e]) => a + (n - s) * (e - w), 0)).toBe(8);
   });
 
   it('merges tiles without duplicating elements on their edges', () => {

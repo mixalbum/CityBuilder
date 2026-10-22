@@ -129,28 +129,36 @@ export async function quickQuery(q: string, urls: string[] = OVERPASS_ENDPOINTS,
  * Fetch every tile, spreading them over the servers: each server runs one
  * query at a time (Overpass limits concurrent queries per user), a server that
  * fails rests for a growing cool-down, and a failed tile goes back in the queue
- * for another server. Gives up on a tile after `maxAttempts` failures.
+ * for another server. A tile that keeps failing (usually a dense city core
+ * timing out) is split into four smaller ones, up to twice. Finished tiles are
+ * saved in `tileDir`, so an interrupted download resumes where it stopped.
  */
-async function fetchTiles(
-  tiles: BBox[],
-  urls: string[],
-  log: (msg: string) => void,
-  tileDir: string,
-  maxAttempts = 10,
-): Promise<OsmData[]> {
+async function fetchTiles(tiles: BBox[], urls: string[], log: (msg: string) => void, tileDir: string, maxAttempts = 10): Promise<OsmData[]> {
   const servers: Server[] = urls.map((url) => ({ url, host: new URL(url).host, busy: false, coolUntil: 0, failures: 0 }));
-  const results: OsmData[] = new Array(tiles.length);
-  // Tiles finished by an earlier, interrupted run are reused.
   const tilePath = (t: BBox) => join(tileDir, `${t.map((v) => v.toFixed(5)).join('_')}.json`);
   mkdirSync(tileDir, { recursive: true });
-  const queue: number[] = [];
-  tiles.forEach((t, i) => {
-    if (existsSync(tilePath(t))) results[i] = JSON.parse(readFileSync(tilePath(t), 'utf8')) as OsmData;
-    else queue.push(i);
-  });
-  if (queue.length < tiles.length) log(`  resuming: ${tiles.length - queue.length} of ${tiles.length} tiles already downloaded`);
-  const attempts = new Array(tiles.length).fill(0);
-  let done = tiles.length - queue.length;
+
+  interface Job {
+    bbox: BBox;
+    depth: number;
+    attempts: number;
+  }
+  const results: OsmData[] = [];
+  const queue: Job[] = [];
+  let resumed = 0;
+  // Reuse finished tiles, including the pieces of tiles split in an earlier run.
+  const enqueue = (bbox: BBox, depth: number) => {
+    if (existsSync(tilePath(bbox))) {
+      results.push(JSON.parse(readFileSync(tilePath(bbox), 'utf8')) as OsmData);
+      resumed++;
+    } else if (depth < 2 && splitBBox(bbox).some((t) => existsSync(tilePath(t)))) {
+      for (const t of splitBBox(bbox)) enqueue(t, depth + 1);
+    } else queue.push({ bbox, depth, attempts: 0 });
+  };
+  for (const t of tiles) enqueue(t, 0);
+  if (resumed) log(`  resuming: ${resumed} tiles already downloaded`);
+  let total = queue.length + resumed;
+  let done = resumed;
   let fatal: Error | undefined;
   const running = new Set<Promise<void>>();
 
@@ -159,28 +167,34 @@ async function fetchTiles(
     const free = servers.filter((s) => !s.busy && s.coolUntil <= now);
     while (queue.length && free.length) {
       const server = free.shift()!;
-      const i = queue.shift()!;
+      const job = queue.shift()!;
       server.busy = true;
-      const job = query(server, buildQuery(tiles[i]))
+      const run = query(server, buildQuery(job.bbox))
         .then((data) => {
-          results[i] = data;
-          writeFileSync(tilePath(tiles[i]), JSON.stringify(data));
+          results.push(data);
+          writeFileSync(tilePath(job.bbox), JSON.stringify(data));
           server.failures = 0;
-          log(`  tile ${++done}/${tiles.length}: ${data.elements.length} elements (${server.host})`);
+          log(`  tile ${++done}/${total}: ${data.elements.length} elements (${server.host})`);
         })
         .catch((err) => {
           server.failures++;
           const wait = Math.min(120, 5 * 2 ** (server.failures - 1));
           server.coolUntil = Date.now() + wait * 1000;
           log(`  ${server.host}: ${String(err).slice(0, 140)} (resting ${wait}s)`);
-          if (++attempts[i] >= maxAttempts) fatal = new Error(`Tile ${i + 1} failed ${maxAttempts} times; the Overpass servers may be overloaded. Try again later, or pass --endpoint <url>.`);
-          else queue.push(i);
+          job.attempts++;
+          if (job.attempts >= 3 && job.depth < 2) {
+            log('  splitting a slow tile into four');
+            for (const t of splitBBox(job.bbox)) queue.push({ bbox: t, depth: job.depth + 1, attempts: 0 });
+            total += 3;
+          } else if (job.attempts >= maxAttempts) {
+            fatal = new Error(`A tile failed ${maxAttempts} times; the Overpass servers may be overloaded. Run the same command again later (finished tiles are kept), or pass --endpoint <url>.`);
+          } else queue.push(job);
         })
         .finally(() => {
           server.busy = false;
-          running.delete(job);
+          running.delete(run);
         });
-      running.add(job);
+      running.add(run);
     }
     // Wait for a job to finish or a server to come off its cool-down.
     const nextCool = Math.min(...servers.filter((s) => !s.busy).map((s) => s.coolUntil), Infinity);
@@ -190,6 +204,17 @@ async function fetchTiles(
   await Promise.allSettled([...running]);
   if (fatal) throw fatal;
   return results;
+}
+
+/** Quarter a bbox. */
+export function splitBBox([s, w, n, e]: BBox): BBox[] {
+  const ms = (s + n) / 2, mw = (w + e) / 2;
+  return [
+    [s, w, ms, mw],
+    [s, mw, ms, e],
+    [ms, w, n, mw],
+    [ms, mw, n, e],
+  ];
 }
 
 export interface FetchOsmOptions {
