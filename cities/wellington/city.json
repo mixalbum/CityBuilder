@@ -1,0 +1,15 @@
+{
+  "name": "Wellington",
+  "query": "Wellington, New Zealand",
+  "origin": {
+    "lat": -41.288795,
+    "lon": 174.777211
+  },
+  "extent": {
+    "minX": -1000,
+    "maxX": 1000,
+    "minN": -1000,
+    "maxN": 1000
+  },
+  "autoLandmarks": 10
+}

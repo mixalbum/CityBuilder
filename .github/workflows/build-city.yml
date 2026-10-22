@@ -1,0 +1,75 @@
+name: Build a city
+
+# Build any city from the Actions tab, no local setup needed:
+# Actions → "Build a city" → Run workflow → type a place name.
+# The built city is attached to the run as a download (unzip it into
+# public/cities/ and run `npm run dev`), and a pull request adds its profile
+# to the repository so the Pages site includes it from then on.
+
+on:
+  workflow_dispatch:
+    inputs:
+      place:
+        description: 'Place to build, e.g. "Wellington, New Zealand" (or an existing city folder name)'
+        required: true
+      size:
+        description: Width and depth in metres (blank = the place's own size, at most 2000)
+        required: false
+      open_pr:
+        description: Open a pull request adding the city's profile
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
+      PLACE: ${{ inputs.place }}
+      SIZE: ${{ inputs.size }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # Elevation tiles are shared by every city; keep them between runs.
+      - uses: actions/cache@v4
+        with:
+          path: data/cache/dem
+          key: dem-${{ github.run_id }}
+          restore-keys: dem-
+      - name: Download and build
+        run: |
+          if [ -n "$SIZE" ]; then npm run city -- "$PLACE" --size "$SIZE"; else npm run city -- "$PLACE"; fi
+      - name: Find the city
+        id: city
+        run: echo "slug=$(node -e "const i=require('./public/cities/index.json');console.log(i.sort((a,b)=>b.builtAt.localeCompare(a.builtAt))[0].slug)")" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: city-${{ steps.city.outputs.slug }}
+          path: |
+            public/cities/${{ steps.city.outputs.slug }}
+            cities/${{ steps.city.outputs.slug }}
+      - name: Open a pull request with the profile
+        if: ${{ inputs.open_pr }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SLUG: ${{ steps.city.outputs.slug }}
+        run: |
+          if git diff --quiet HEAD -- "cities/$SLUG" && [ -z "$(git ls-files --others --exclude-standard "cities/$SLUG")" ]; then
+            echo "cities/$SLUG is unchanged; no pull request needed."; exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "city/$SLUG-${{ github.run_id }}"
+          git add "cities/$SLUG"
+          git commit -m "Add city profile: $SLUG"
+          git push -u origin HEAD
+          gh pr create --title "Add city: $SLUG" --body "Profile created by the **Build a city** workflow for \"$PLACE\". The built city is attached to [the run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) as an artifact."

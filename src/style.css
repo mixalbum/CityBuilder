@@ -1,0 +1,138 @@
+html,
+body,
+#app {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #bfd8ea;
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+canvas {
+  display: block;
+}
+
+.hud {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  max-width: 320px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: rgba(20, 24, 30, 0.72);
+  color: #eef2f5;
+  font-size: 13px;
+  line-height: 1.4;
+  backdrop-filter: blur(6px);
+}
+
+.hud h1 {
+  margin: 0 0 8px;
+  font-size: 17px;
+  letter-spacing: 0.02em;
+}
+
+.hud h1 span {
+  color: #f2c14e;
+  font-weight: 500;
+}
+
+.hud p {
+  margin: 6px 0 0;
+}
+
+.hud .warn {
+  color: #ffd27a;
+}
+
+.hud .help,
+.hud .attribution {
+  color: #a9b4bf;
+  font-size: 12px;
+}
+
+.hud select {
+  margin-left: 6px;
+  font: inherit;
+}
+
+.hud code {
+  background: rgba(255, 255, 255, 0.12);
+  padding: 0 4px;
+  border-radius: 3px;
+}
+
+.hud.error {
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.hud .time {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.hud .time input {
+  flex: 1;
+}
+
+.hud .time button {
+  width: 32px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.hud .time .clock {
+  font-variant-numeric: tabular-nums;
+  min-width: 3em;
+}
+
+.hud .actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.hud .actions button {
+  font: inherit;
+  cursor: pointer;
+}
+
+.hud[hidden] {
+  display: none;
+}
+
+.hud .modes {
+  display: flex;
+  margin-top: 8px;
+}
+
+.hud .modes button {
+  flex: 1;
+  padding: 3px 0;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.hud .modes button + button {
+  border-left: none;
+}
+
+.hud .modes button:first-child {
+  border-radius: 5px 0 0 5px;
+}
+
+.hud .modes button:last-child {
+  border-radius: 0 5px 5px 0;
+}
+
+.hud .modes button.active {
+  background: #f2c14e;
+  color: #14181e;
+}

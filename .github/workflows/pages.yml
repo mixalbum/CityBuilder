@@ -1,0 +1,64 @@
+name: Deploy to GitHub Pages
+
+# Builds every city in cities/ and publishes the viewer with a city picker.
+# Opt in: Settings → Pages → Source: GitHub Actions, then set the repository
+# variable DEPLOY_PAGES to true (Settings → Secrets and variables → Actions).
+
+on:
+  push:
+    branches: [main]
+    paths: ['cities/**', 'pipeline/**', 'src/**', 'index.html', 'package*.json', '.github/workflows/pages.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    if: ${{ vars.DEPLOY_PAGES == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # Map data changes slowly: reuse downloads for up to a week.
+      - id: week
+        run: echo "week=$(date -u +%G-%V)" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@v4
+        with:
+          path: data/cache
+          key: map-data-${{ steps.week.outputs.week }}-${{ hashFiles('cities/*/city.json') }}
+          restore-keys: map-data-${{ steps.week.outputs.week }}-
+      - name: Build every city
+        run: |
+          for f in cities/*/city.json; do
+            slug=$(basename "$(dirname "$f")")
+            npm run city -- "$slug" || echo "::warning::$slug failed to build"
+          done
+      - run: npx vite build
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

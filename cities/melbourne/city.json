@@ -1,0 +1,516 @@
+{
+  "name": "Melbourne CBD",
+  "query": "Melbourne CBD, Victoria, Australia",
+  "origin": {
+    "lat": -37.81747,
+    "lon": 144.96744
+  },
+  "extent": {
+    "minX": -1360,
+    "maxX": 880,
+    "minN": -540,
+    "maxN": 1000
+  },
+  "gridStreets": [
+    "Flinders Street",
+    "Collins Street",
+    "Bourke Street",
+    "Lonsdale Street",
+    "La Trobe Street",
+    "Spencer Street",
+    "King Street",
+    "William Street",
+    "Queen Street",
+    "Elizabeth Street",
+    "Swanston Street",
+    "Russell Street",
+    "Exhibition Street",
+    "Spring Street"
+  ],
+  "streetWidths": [
+    {
+      "match": "^(Flinders|Collins|Bourke|Lonsdale|La Trobe|Spencer|King|William|Queen|Elizabeth|Swanston|Russell|Exhibition|Spring) Street$",
+      "width": 30,
+      "carriageway": 20,
+      "kind": "main"
+    },
+    {
+      "match": "^Little |^Flinders Lane$",
+      "width": 10,
+      "carriageway": 6,
+      "kind": "little"
+    },
+    {
+      "match": "\\b(Lane|Place|Alley|Walk|Arcade|Way)\\b",
+      "kind": "lane"
+    },
+    {
+      "highway": "^service$",
+      "kind": "lane"
+    }
+  ],
+  "defaultHeight": 12,
+  "sources": [
+    "melbourne-footprints"
+  ],
+  "landmarks": [
+    {
+      "name": "Flinders Street Station",
+      "at": {
+        "lat": -37.8181,
+        "lon": 144.9669
+      }
+    },
+    {
+      "name": "St Paul's Cathedral",
+      "at": {
+        "lat": -37.817,
+        "lon": 144.9679
+      }
+    },
+    {
+      "name": "Federation Square",
+      "at": {
+        "lat": -37.818,
+        "lon": 144.969
+      }
+    },
+    {
+      "name": "Young and Jackson",
+      "aliases": [
+        "Young & Jacksons",
+        "Young & Jackson"
+      ]
+    },
+    {
+      "name": "Melbourne Town Hall",
+      "at": {
+        "lat": -37.81501,
+        "lon": 144.96668
+      }
+    },
+    {
+      "name": "State Library Victoria"
+    },
+    {
+      "name": "Melbourne Central",
+      "aliases": [
+        "Melbourne Central office tower"
+      ]
+    },
+    {
+      "name": "Parliament House",
+      "aliases": [
+        "Parliament House Victoria"
+      ]
+    },
+    {
+      "name": "Old Treasury Building"
+    },
+    {
+      "name": "Princess Theatre"
+    },
+    {
+      "name": "General Post Office",
+      "aliases": [
+        "Melbourne's GPO",
+        "GPO"
+      ]
+    },
+    {
+      "name": "Block Arcade"
+    },
+    {
+      "name": "Manchester Unity Building"
+    },
+    {
+      "name": "Southern Cross Station",
+      "aliases": [
+        "Southern Cross"
+      ]
+    },
+    {
+      "name": "Rialto Towers",
+      "aliases": [
+        "Rialto"
+      ]
+    },
+    {
+      "name": "101 Collins Street"
+    },
+    {
+      "name": "120 Collins Street"
+    },
+    {
+      "name": "Eureka Tower"
+    },
+    {
+      "name": "Australia 108"
+    },
+    {
+      "name": "Hamer Hall"
+    },
+    {
+      "name": "Princes Bridge",
+      "at": {
+        "lat": -37.81936,
+        "lon": 144.96831
+      }
+    },
+    {
+      "name": "Arts Centre Melbourne",
+      "at": {
+        "lat": -37.8213,
+        "lon": 144.9686
+      }
+    }
+  ],
+  "autoLandmarks": 0,
+  "views": [
+    {
+      "name": "overview",
+      "target": "origin",
+      "offset": [
+        900,
+        900,
+        1100
+      ]
+    },
+    {
+      "name": "flinders-swanston",
+      "target": "origin",
+      "offset": [
+        160,
+        110,
+        200
+      ]
+    },
+    {
+      "name": "collins-west",
+      "landmark": "Rialto Towers",
+      "offset": [
+        260,
+        200,
+        300
+      ],
+      "lift": 0.4
+    },
+    {
+      "name": "southbank",
+      "landmark": "Eureka Tower",
+      "offset": [
+        -300,
+        260,
+        380
+      ],
+      "lift": 0.4
+    },
+    {
+      "name": "street-level",
+      "target": "origin",
+      "shift": [
+        0,
+        6,
+        -260
+      ],
+      "offset": [
+        0,
+        -1,
+        228
+      ]
+    },
+    {
+      "name": "trams",
+      "tramNear": [
+        0,
+        -150
+      ],
+      "offset": [
+        34,
+        34,
+        44
+      ]
+    },
+    {
+      "name": "dusk",
+      "target": "origin",
+      "offset": [
+        520,
+        300,
+        640
+      ],
+      "time": 18.3
+    },
+    {
+      "name": "night",
+      "target": "origin",
+      "offset": [
+        520,
+        300,
+        640
+      ],
+      "time": 21.5
+    },
+    {
+      "name": "night-street",
+      "target": "origin",
+      "shift": [
+        0,
+        6,
+        -260
+      ],
+      "offset": [
+        0,
+        -1,
+        228
+      ],
+      "time": 21.5
+    },
+    {
+      "name": "walk-swanston",
+      "target": "origin",
+      "shift": [
+        -6,
+        0,
+        -40
+      ],
+      "offset": [
+        0,
+        0,
+        40
+      ],
+      "mode": "walk",
+      "keys": [
+        "KeyW"
+      ],
+      "seconds": 12
+    },
+    {
+      "name": "fly-yarra",
+      "target": "origin",
+      "shift": [
+        300,
+        70,
+        110
+      ],
+      "offset": [
+        -500,
+        50,
+        0
+      ],
+      "mode": "fly",
+      "keys": [
+        "KeyW"
+      ],
+      "seconds": 3
+    },
+    {
+      "name": "diorama",
+      "target": "origin",
+      "shift": [
+        -280,
+        0,
+        -330
+      ],
+      "offset": [
+        1,
+        1,
+        1
+      ],
+      "mode": "diorama",
+      "zoom": 0.8
+    },
+    {
+      "name": "diorama-southbank",
+      "landmark": "Eureka Tower",
+      "offset": [
+        1,
+        1,
+        1
+      ],
+      "lift": 0,
+      "mode": "diorama",
+      "zoom": 1.4
+    },
+    {
+      "name": "lm-flinders-station",
+      "landmark": "Flinders Street Station",
+      "offset": [
+        70,
+        45,
+        -110
+      ],
+      "lift": 0.5
+    },
+    {
+      "name": "lm-st-pauls",
+      "landmark": "St Paul's Cathedral",
+      "offset": [
+        -95,
+        40,
+        105
+      ],
+      "lift": 0.35
+    },
+    {
+      "name": "lm-fed-square",
+      "landmark": "Federation Square",
+      "offset": [
+        110,
+        70,
+        120
+      ],
+      "lift": 0.3
+    },
+    {
+      "name": "lm-state-library",
+      "landmark": "State Library Victoria",
+      "offset": [
+        -130,
+        70,
+        90
+      ],
+      "lift": 0.4
+    },
+    {
+      "name": "lm-arts-centre",
+      "landmark": "Arts Centre Melbourne",
+      "offset": [
+        170,
+        80,
+        -180
+      ],
+      "lift": 0.35
+    },
+    {
+      "name": "lm-eureka",
+      "landmark": "Eureka Tower",
+      "offset": [
+        190,
+        90,
+        210
+      ],
+      "lift": 0.8
+    },
+    {
+      "name": "lm-melbourne-central",
+      "landmark": "Melbourne Central",
+      "offset": [
+        130,
+        90,
+        140
+      ],
+      "lift": 1.2
+    },
+    {
+      "name": "lm-southern-cross",
+      "landmark": "Southern Cross Station",
+      "offset": [
+        180,
+        140,
+        200
+      ],
+      "lift": 0.5
+    },
+    {
+      "name": "lm-parliament",
+      "landmark": "Parliament House",
+      "offset": [
+        -120,
+        45,
+        50
+      ],
+      "lift": 0.4
+    },
+    {
+      "name": "lm-princess-theatre",
+      "landmark": "Princess Theatre",
+      "offset": [
+        90,
+        35,
+        60
+      ],
+      "lift": 0.6
+    },
+    {
+      "name": "lm-old-treasury",
+      "landmark": "Old Treasury Building",
+      "offset": [
+        -85,
+        55,
+        15
+      ],
+      "lift": 0.4
+    },
+    {
+      "name": "lm-gpo",
+      "landmark": "General Post Office",
+      "offset": [
+        -80,
+        45,
+        90
+      ],
+      "lift": 0.4
+    },
+    {
+      "name": "lm-town-hall",
+      "landmark": "Melbourne Town Hall",
+      "offset": [
+        -75,
+        70,
+        40
+      ],
+      "lift": 0.3
+    },
+    {
+      "name": "lm-block-arcade",
+      "landmark": "Block Arcade",
+      "offset": [
+        35,
+        60,
+        85
+      ],
+      "lift": 0.6
+    },
+    {
+      "name": "lm-manchester-unity",
+      "landmark": "Manchester Unity Building",
+      "offset": [
+        75,
+        45,
+        80
+      ],
+      "lift": 0.6
+    },
+    {
+      "name": "lm-hamer-hall",
+      "landmark": "Hamer Hall",
+      "offset": [
+        95,
+        50,
+        95
+      ],
+      "lift": 0.4
+    },
+    {
+      "name": "lm-young-jackson",
+      "landmark": "Young and Jackson",
+      "offset": [
+        55,
+        25,
+        55
+      ],
+      "lift": 0.5
+    },
+    {
+      "name": "lm-princes-bridge",
+      "landmark": "Princes Bridge",
+      "offset": [
+        85,
+        30,
+        35
+      ],
+      "lift": 0
+    }
+  ]
+}

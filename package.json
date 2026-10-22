@@ -1,0 +1,35 @@
+{
+  "name": "citybuilder",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Build a voxel-art model of any city from open map data, explorable in the browser",
+  "type": "module",
+  "scripts": {
+    "city": "tsx pipeline/cli/city.ts",
+    "new-city": "tsx pipeline/cli/newCity.ts",
+    "build:world": "tsx pipeline/build.ts",
+    "new-landmark": "tsx pipeline/cli/newLandmark.ts",
+    "export:vox": "tsx pipeline/export/exportVox.ts",
+    "screenshots": "tsx scripts/screenshot.ts",
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "three": "^0.186.1"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "@types/three": "^0.186.0",
+    "playwright": "^1.64.1",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.5",
+    "vitest": "^5.0.5"
+  },
+  "engines": {
+    "node": ">=20.19"
+  }
+}
