@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "description": "Build a voxel-art model of any city from open map data, explorable in the browser",
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "city": "tsx pipeline/cli/city.ts",
