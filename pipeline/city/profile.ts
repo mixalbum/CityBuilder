@@ -37,7 +37,7 @@ export interface ViewDef {
   offset: [number, number, number];
   /** Aim this fraction of the landmark's height up. */
   lift?: number;
-  /** Time of day in hours; 16.5 by default. */
+  /** Time of day in hours; 14.5 by default. */
   time?: number;
   /** Aim at the tram nearest this point (voxels from the origin). */
   tramNear?: [number, number];

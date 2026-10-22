@@ -35,7 +35,8 @@ if (!slug) {
 const outDir = values.out ?? join('screenshots', slug);
 const only = values.views?.split(',');
 
-const kebab = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const kebab = (s: string) =>
+  s.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
 /** Standard views scaled to the city's size, plus one per landmark. */
 function standardViews(m: WorldManifest): ViewDef[] {
@@ -110,7 +111,7 @@ async function main(): Promise<void> {
       w.controls.target.set(tx, ty, tz);
       w.city.camera.position.set(tx + v.offset[0], ty + v.offset[1], tz + v.offset[2]);
       w.controls.update(0);
-      w.setTime?.(v.time ?? 16.5);
+      w.setTime?.(v.time ?? 14.5);
       if (v.mode) {
         w.controls.setMode(v.mode);
         if (v.zoom) (w.city.ortho.zoom = v.zoom), w.city.ortho.updateProjectionMatrix();

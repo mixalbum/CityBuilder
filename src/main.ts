@@ -62,8 +62,8 @@ async function main(): Promise<void> {
   controls.target.set(ox, gy, oz);
   city.camera.position.set(ox + 420, gy + 380, oz + 460);
 
-  // Time of day: ?time=21.5 in the URL, else late afternoon. One hour passes every 4 s when playing.
-  const time: TimeControl = { hours: parseFloat(params.get('time') ?? '') || 16.5, playing: false };
+  // Time of day: ?time=21.5 in the URL, else early afternoon (good light at any latitude and season). One hour passes every 4 s when playing.
+  const time: TimeControl = { hours: parseFloat(params.get('time') ?? '') || 14.5, playing: false };
   const doy = dayOfYear(new Date());
   const dayNight = new DayNight({ sun: city.sun, hemi: city.hemi, scene: city.scene, fog: city.fog, night: loader.night }, manifest.gridAngleDeg, manifest.city?.lat);
 

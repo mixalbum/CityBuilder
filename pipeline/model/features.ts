@@ -217,13 +217,33 @@ export function hideOutlinesWithParts(buildings: Building[]): Building[] {
     }
     return [cx / ring.length, cz / ring.length] as Pt;
   });
-  return buildings.map((b) => {
+  const parents = new Map<Building, Building>();
+  const out = buildings.map((b) => {
     if (b.isPart) return b;
     const [x0, z0, x1, z1] = ringsBBox(b.rings);
-    const hasPart = probes.some(([x, z]) => x >= x0 && x <= x1 && z >= z0 && z <= z1 && pointInRings(x, z, b.rings));
+    let hasPart = false;
+    probes.forEach(([x, z], i) => {
+      if (x >= x0 && x <= x1 && z >= z0 && z <= z1 && pointInRings(x, z, b.rings)) {
+        hasPart = true;
+        if (!parents.has(parts[i])) parents.set(parts[i], b);
+      }
+    });
     return hasPart ? { ...b, hidden: true } : b;
   });
+  // Parts rarely repeat their building's type, age or colours: inherit them,
+  // so a church's 80 m tower is styled as a church, not a glass skyscraper.
+  return out.map((b) => {
+    const parent = b.isPart ? parents.get(b) : undefined;
+    if (!parent) return b;
+    const tags = { ...b.tags };
+    if (parent.tags.building && parent.tags.building !== 'yes') tags['parent:building'] = parent.tags.building;
+    for (const k of INHERITED) if (tags[k] === undefined && parent.tags[k] !== undefined) tags[k] = parent.tags[k];
+    return { ...b, tags };
+  });
 }
+
+/** Tags a building:part takes from its building when it has none of its own. */
+const INHERITED = ['start_date', 'historic', 'heritage', 'amenity', 'building:colour', 'building:material', 'roof:colour', 'roof:material'];
 
 export function extractFeatures(osm: OsmData, frame: WorldFrame, roads = new RoadClassifier()): Features {
   const toRing = (pts: OsmPoint[]): Ring => pts.map((p) => frame.latLonToVoxel(p.lat, p.lon));
@@ -295,7 +315,6 @@ export function extractFeatures(osm: OsmData, frame: WorldFrame, roads = new Roa
   return f;
 }
 
-/** Highway lines with their names and classes, for estimating the grid angle. */
 /** Scatter trees through woods and forests, about one every 9 m, jittered deterministically. */
 export function woodlandTrees(areas: Area[]): Tree[] {
   const out: Tree[] = [];
@@ -313,6 +332,7 @@ export function woodlandTrees(areas: Area[]): Tree[] {
   return out;
 }
 
+/** Highway lines with their names and classes, for estimating the grid angle. */
 export function osmLines(osm: OsmData): { name: string; highway: string; points: OsmPoint[] }[] {
   const out: { name: string; highway: string; points: OsmPoint[] }[] = [];
   for (const el of osm.elements)

@@ -11,5 +11,6 @@
     "minN": -500,
     "maxN": 500
   },
-  "autoLandmarks": 10
+  "autoLandmarks": 10,
+  "gridAngleDeg": 8.68
 }

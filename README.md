@@ -32,6 +32,14 @@ Streets line up with the voxel grid, buildings get facades, roofs and rooftop cl
 | **The waterfront** | **Night** |
 | ![Wellington centre](docs/screenshots/wellington/centre.jpg) | ![Wellington at night](docs/screenshots/wellington/night.jpg) |
 
+### Prague Old Town, 1 × 1 km
+
+`npm run city -- "Prague Old Town Square" --size 1000 --name "Prague Old Town" --slug prague`. Terracotta roofs, the Old Town Square and the Old Town Hall, the Týn Church and the Rudolfinum come straight from OpenStreetMap's tags. The Týn Church's spires are the kind of detail a [hand-made landmark model](docs/LANDMARKS.md) adds.
+
+| Diorama | Old Town Square |
+|---|---|
+| ![Prague diorama](docs/screenshots/prague/diorama.jpg) | ![Old Town Square](docs/screenshots/prague/centre.jpg) |
+
 <!-- GALLERY -->
 
 ## Get started
