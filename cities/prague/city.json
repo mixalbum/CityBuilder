@@ -1,0 +1,15 @@
+{
+  "name": "Prague Old Town",
+  "query": "Prague Old Town Square",
+  "origin": {
+    "lat": 50.087445,
+    "lon": 14.420971
+  },
+  "extent": {
+    "minX": -500,
+    "maxX": 500,
+    "minN": -500,
+    "maxN": 500
+  },
+  "autoLandmarks": 10
+}

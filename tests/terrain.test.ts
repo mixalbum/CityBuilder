@@ -75,7 +75,7 @@ describe('terrain', () => {
   it('lays the street surface on the terrain with subsoil beneath', () => {
     const { terrain } = buildTerrain(fc, frame, []);
     const world = new VoxelWorld(frame.sizeX, 64, frame.sizeZ);
-    const features: Features = { buildings: [], roads: [], rails: [], areas: [], trees: [], piers: [] };
+    const features: Features = { buildings: [], roads: [], rails: [], areas: [], trees: [], piers: [], coastlines: [] };
     generateGround(world, features, terrain);
     const [cx, cz] = frame.gridToVoxel(0, 100);
     const s = terrain.surface(cx, cz);

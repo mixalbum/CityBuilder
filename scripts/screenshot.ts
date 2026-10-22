@@ -1,7 +1,7 @@
 // Capture viewer screenshots of a city from fixed cameras, for READMEs and for
 // checking a build by eye. Every city gets a standard set of views (overview,
-// centre, dusk, night, a walk, a diorama, and one per landmark); a profile's
-// "views" add or replace views by name.
+// centre, dusk, night, a diorama, and one per landmark); a profile's "views"
+// add or replace views by name (e.g. a walk along a known street).
 //
 //   npm run dev                                         # in another terminal
 //   npm run screenshots -- <city>                       # all views → screenshots/<city>/
@@ -46,7 +46,6 @@ function standardViews(m: WorldManifest): ViewDef[] {
     { name: 'centre', target: 'origin', offset: [160, 110, 200] },
     { name: 'dusk', target: 'origin', offset: [far * 0.45, far * 0.27, far * 0.56], time: 18.3 },
     { name: 'night', target: 'origin', offset: [far * 0.45, far * 0.27, far * 0.56], time: 21.5 },
-    { name: 'walk', target: 'origin', offset: [0, 0, 40], mode: 'walk', keys: ['KeyW'], seconds: 6 },
     { name: 'diorama', target: 'origin', offset: [1, 1, 1], mode: 'diorama', zoom: Math.min(2, 1400 / span) },
   ];
   for (const l of m.landmarks) {

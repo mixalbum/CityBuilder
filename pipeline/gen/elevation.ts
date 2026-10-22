@@ -163,6 +163,8 @@ export function gridToTerrain(
   opts: GridOptions,
   /** Coarse cells that are open sea: pinned at sea level, which becomes the datum. */
   seaCells?: Uint8Array,
+  /** Exact per-column sea (e.g. from coastlines), refining the coarse cells at the shore. */
+  seaColumns?: Uint8Array,
 ): Terrain {
   // Each water body's cells and level on the coarse grid.
   const bodies: { area: Area; cells: number[]; level: number }[] = [];
@@ -231,7 +233,7 @@ export function gridToTerrain(
     sea = new Uint8Array(sizeX * sizeZ);
     for (let z = 0; z < sizeZ; z++)
       for (let x = 0; x < sizeX; x++)
-        if (seaCells![Math.round(z / CELL) * gw + Math.round(x / CELL)]) {
+        if (seaColumns ? seaColumns[z * sizeX + x] : seaCells![Math.round(z / CELL) * gw + Math.round(x / CELL)]) {
           sea[z * sizeX + x] = 1;
           lifts[z * sizeX + x] = 0;
         }
@@ -250,6 +252,8 @@ export function demTerrain(
   sizeX: number,
   sizeZ: number,
   areas: Area[],
+  /** Sea from OSM coastlines (coastlineSea), if any. */
+  coastSea?: Uint8Array,
 ): Terrain {
   const gw = Math.ceil(sizeX / CELL) + 1, gd = Math.ceil(sizeZ / CELL) + 1;
   const raw = new Float32Array(gw * gd);
@@ -258,9 +262,14 @@ export function demTerrain(
       const { lat, lon } = toLatLon(i * CELL, j * CELL);
       raw[j * gw + i] = sample(lat, lon);
     }
-  // The model carries bathymetry: clearly below sea level is open water.
+  // Open water: the coastline's sea side if there is one; else, where the
+  // model has bathymetry, anything clearly below sea level.
   const seaCells = new Uint8Array(gw * gd);
-  for (let k = 0; k < raw.length; k++) if (raw[k] < -1.5) seaCells[k] = 1;
+  for (let j = 0; j < gd; j++)
+    for (let i = 0; i < gw; i++) {
+      const x = Math.min(sizeX - 1, i * CELL), z = Math.min(sizeZ - 1, j * CELL);
+      if (coastSea ? coastSea[z * sizeX + x] : raw[j * gw + i] < -1.5) seaCells[j * gw + i] = 1;
+    }
   const R = 3; // cells: ±24 m
   const grid = new Float32Array(gw * gd);
   for (let j = 0; j < gd; j++)
@@ -274,7 +283,7 @@ export function demTerrain(
       grid[j * gw + i] = lo;
     }
   for (let k = 0; k < grid.length; k++) if (seaCells[k]) grid[k] = 0;
-  return gridToTerrain(grid, gw, gd, sizeX, sizeZ, areas, { datum: 'water', water: 'own' }, seaCells);
+  return gridToTerrain(grid, gw, gd, sizeX, sizeZ, areas, { datum: 'water', water: 'own' }, seaCells, coastSea);
 }
 
 /**

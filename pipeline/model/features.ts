@@ -83,6 +83,8 @@ export interface Features {
   areas: Area[];
   trees: Tree[];
   piers: Pier[];
+  /** Coastline pieces: OSM draws them with the land on the left, the sea on the right. */
+  coastlines: Ring[];
 }
 
 const SKIP_HIGHWAYS = new Set(['steps', 'corridor', 'proposed', 'construction', 'elevator', 'platform', 'bus_stop', 'raceway', 'abandoned']);
@@ -225,7 +227,7 @@ export function hideOutlinesWithParts(buildings: Building[]): Building[] {
 
 export function extractFeatures(osm: OsmData, frame: WorldFrame, roads = new RoadClassifier()): Features {
   const toRing = (pts: OsmPoint[]): Ring => pts.map((p) => frame.latLonToVoxel(p.lat, p.lon));
-  const f: Features = { buildings: [], roads: [], rails: [], areas: [], trees: [], piers: [] };
+  const f: Features = { buildings: [], roads: [], rails: [], areas: [], trees: [], piers: [], coastlines: [] };
 
   for (const el of osm.elements) {
     const tags = el.tags ?? {};
@@ -260,6 +262,10 @@ export function extractFeatures(osm: OsmData, frame: WorldFrame, roads = new Roa
       continue;
     }
 
+    if (line && tags.natural === 'coastline') {
+      f.coastlines.push(line);
+      continue;
+    }
     const closed = el.type === 'relation' || (line !== undefined && line.length > 3 && line[0][0] === line[line.length - 1][0] && line[0][1] === line[line.length - 1][1]);
     const area = closed ? areaKind(tags) : undefined;
     if (area) {

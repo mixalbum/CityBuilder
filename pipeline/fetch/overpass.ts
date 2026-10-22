@@ -48,6 +48,7 @@ export function buildQuery(bbox: BBox): string {
   node["natural"="tree"](${b});
   way["natural"="tree_row"](${b});
   way["man_made"~"^(bridge|pier)$"](${b});
+  way["natural"="coastline"](${b});
 );
 out geom;`;
 }

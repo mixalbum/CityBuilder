@@ -4,6 +4,7 @@ import { M } from '../src/world/palette';
 import { profileBBox } from '../pipeline/build';
 import { extentAround, slugify, validateProfile, type CityProfile } from '../pipeline/city/profile';
 import { nearestMaterial, parseColour, roofTint, tintStyle, wallTint, WALL_MATERIALS } from '../pipeline/gen/colours';
+import { coastlineSea } from '../pipeline/gen/coast';
 import { gridToTerrain } from '../pipeline/gen/elevation';
 import type { FacadeStyle } from '../pipeline/gen/facades';
 import { pickAutoLandmarks } from '../pipeline/gen/landmarks/auto';
@@ -181,6 +182,30 @@ describe('terrain water levels', () => {
     expect(t.isSea(2, 40)).toBe(true);
     expect(t.lift(2, 40)).toBe(0);
     expect(t.lift(70, 40)).toBeGreaterThan(20);
+  });
+});
+
+describe('coastline sea', () => {
+  it('floods the sea side of a coastline (land on the left of its direction)', () => {
+    // A coastline running north (towards -z) at x = 50: land to the west, sea to the east.
+    const sea = coastlineSea([[[50, 99], [50, 0]]], 100, 100)!;
+    expect(sea[50 * 100 + 80]).toBe(1);
+    expect(sea[50 * 100 + 20]).toBe(0);
+    expect(sea[99 * 100 + 99]).toBe(1);
+  });
+
+  it('closes a bay against the world edge', () => {
+    // An L-shaped shore: coming down from the north edge, then out to the east edge.
+    const sea = coastlineSea([[[30, 0], [30, 60], [99, 60]]], 100, 100)!;
+    // Walking south then east with the land on the left: the north-east corner is land, the rest sea.
+    expect(sea[20 * 100 + 70]).toBe(0);
+    expect(sea[80 * 100 + 70]).toBe(1);
+    expect(sea[80 * 100 + 10]).toBe(1);
+  });
+
+  it('returns nothing without coastlines in the world', () => {
+    expect(coastlineSea([], 50, 50)).toBeUndefined();
+    expect(coastlineSea([[[-10, -10], [-5, -20]]], 50, 50)).toBeUndefined();
   });
 });
 

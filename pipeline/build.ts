@@ -17,6 +17,7 @@ import { loadDem } from './fetch/dem';
 import type { BBox } from './fetch/overpass';
 import { generateSyntheticOsm } from './fixtures/synthetic';
 import { generateBuildings } from './gen/buildings';
+import { coastlineSea } from './gen/coast';
 import { demTerrain, Terrain } from './gen/elevation';
 import { buildLandmarks, planLandmarks, type LandmarkModel } from './gen/landmarks';
 import { pickAutoLandmarks } from './gen/landmarks/auto';
@@ -104,7 +105,8 @@ export function buildWorld(opts: BuildOptions) {
     }
 
   // Terrain: a source's survey, else the global elevation model, else flat.
-  let terrain = Terrain.flat(frame.sizeX, frame.sizeZ);
+  const coastSea = coastlineSea(features.coastlines, frame.sizeX, frame.sizeZ);
+  let terrain = coastSea ? new Terrain(frame.sizeX, frame.sizeZ, new Int16Array(frame.sizeX * frame.sizeZ), coastSea) : Terrain.flat(frame.sizeX, frame.sizeZ);
   let usedDem = false;
   const mode = opts.flat ? 'flat' : (profile.terrain ?? 'auto');
   const surveyed = sources.find((s) => s.data.terrain);
@@ -115,9 +117,9 @@ export function buildWorld(opts: BuildOptions) {
   } else if (mode !== 'flat' && !synthetic) {
     const dem = loadDem(profileBBox(profile, extent, angle));
     if (dem) {
-      terrain = demTerrain(dem, (x, z) => frame.projector.toLatLon(x + extent.minX, extent.maxN - z), frame.sizeX, frame.sizeZ, features.areas);
+      terrain = demTerrain(dem, (x, z) => frame.projector.toLatLon(x + extent.minX, extent.maxN - z), frame.sizeX, frame.sizeZ, features.areas, coastSea);
       usedDem = true;
-      log(`Terrain: elevation model, 0–${terrain.maxLift()} m above the lowest water${terrain.sea ? ' (sea from bathymetry)' : ''}`);
+      log(`Terrain: elevation model, 0–${terrain.maxLift()} m above the lowest water${terrain.sea ? (coastSea ? ' (sea from coastlines)' : ' (sea from bathymetry)') : ''}`);
     } else log('Terrain: no elevation tiles downloaded, building flat (run npm run city to fetch them)');
   }
 

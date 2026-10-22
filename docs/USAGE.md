@@ -130,7 +130,7 @@ npm run screenshots -- wellington                        # all views → screens
 npm run screenshots -- wellington --views overview,diorama,night
 ```
 
-Every city gets these views: `overview`, `centre`, `dusk`, `night`, `walk`, `diorama`, and an `lm-<name>` view for each landmark. A profile's `views` list adds or replaces views (see [NEW_CITY.md](NEW_CITY.md#screenshot-views)). The first run may ask you to `npx playwright install chromium`.
+Every city gets these views: `overview`, `centre`, `dusk`, `night`, `diorama`, and an `lm-<name>` view for each landmark. A profile's `views` list adds or replaces views (see [NEW_CITY.md](NEW_CITY.md#screenshot-views)). The first run may ask you to `npx playwright install chromium`.
 
 ### Development
 
