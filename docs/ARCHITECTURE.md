@@ -86,7 +86,7 @@ tests/                             vitest unit tests
    - **From the elevation model:** samples on an 8 m grid, then a minimum filter over ±24 m strips buildings and trees that leak into it.
    - **From a data source:** surveyed points are interpolated (inverse-distance weighting).
    - **Water bodies** are pinned flat at their own level.
-   - **The sea** is detected from the model's bathymetry (below −1.5 m).
+   - **The sea** comes from OSM coastlines (`gen/coast.ts`): drawn as walls, with sea seeded on their right and land on their left, flood-filled. Bathymetry (below −1.5 m) is the fallback.
    - **Datum:** the lowest water (or sea level) becomes lift 0, and the result is smoothed.
 4. **Ground** (`gen/terrain.ts`):
    - soil down to the lowest neighbour (no holes on slopes);

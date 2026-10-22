@@ -22,6 +22,16 @@ Streets line up with the voxel grid, buildings get facades, roofs and rooftop cl
 | **Walking up Swanston St** | **Night** |
 | ![Walk mode](docs/screenshots/melbourne/walk-swanston.jpg) | ![Night](docs/screenshots/melbourne/night.jpg) |
 
+### Wellington, built from just its name
+
+`npm run city -- "Wellington, New Zealand"`. No local knowledge was added: the harbour, the hills (up to 150 m), the waterfront and a jump list of eight landmarks (Te Papa, the Supreme Court, the Reserve Bank…) all came from open data.
+
+| Overview | Diorama |
+|---|---|
+| ![Wellington overview](docs/screenshots/wellington/overview.jpg) | ![Wellington diorama](docs/screenshots/wellington/diorama.jpg) |
+| **The waterfront** | **Night** |
+| ![Wellington centre](docs/screenshots/wellington/centre.jpg) | ![Wellington at night](docs/screenshots/wellington/night.jpg) |
+
 <!-- GALLERY -->
 
 ## Get started
@@ -42,7 +52,7 @@ Step-by-step instructions for each: **[docs/QUICKSTART.md](docs/QUICKSTART.md)**
   - heights from OSM (`height`, `building:levels`) or open surveyed data;
   - facades in glass-tower, Victorian/heritage, Art Deco and warehouse styles;
   - roofs from OSM `roof:shape` (gabled, hipped, domes, onion domes, spires), recoloured by `building:colour` and `roof:colour`.
-- **Terrain everywhere:** hills from the global elevation model, rivers and lakes flat at their own level, the sea from the sea floor, stone foundations on slopes.
+- **Terrain everywhere:** hills from the global elevation model, rivers and lakes flat at their own level, the open sea from OSM coastlines, stone foundations on slopes.
 - **Landmarks:**
   - a jump list picked automatically from notable buildings;
   - hand-modelled landmarks for the buildings that define a skyline (Melbourne has 18). `npm run new-landmark` scaffolds one.

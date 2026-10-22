@@ -38,7 +38,7 @@ Look at it in the viewer from a few angles: the diorama mode (key **4**) is the 
 | Most buildings are the same height | Few OSM `height`/`building:levels` tags | Set `defaultHeight` to the typical height; add a data source (§5); improve OSM (§5) |
 | Main avenues look too narrow | Untagged widths | Add `streetWidths` rules |
 | Terrain spikes or pits | Elevation-model noise around tall buildings or bridges | Usually smoothed out; set `"terrain": "flat"` for a flat city |
-| The sea or a river is missing | Not mapped as a water area in OSM (coastline only) | Sea comes from the elevation model's sea floor; rivers need `natural=water` areas in OSM |
+| The sea or a river is missing | The coastline doesn't cross the extent, or a river isn't mapped as an area | The sea comes from OSM coastlines (or the sea floor in the elevation model); rivers need `natural=water` areas in OSM |
 | A famous building is missing from the jump list | It isn't named in OSM, or is outside the extent | Add it to `landmarks` with an `at` position |
 
 `npm run build:world -- <name> --preview` rebuilds just the middle 600 m in a few seconds, which is handy while tuning.
@@ -186,7 +186,7 @@ Even without hand modelling, OSM's `roof:shape=dome|onion|cone` and colour tags 
 
 - **Grid cities** (Melbourne, Manhattan, Barcelona's Eixample, Chicago, Kyoto): the grid angle matters most. Check it first.
 - **Old towns** (Prague, Siena, Fez): no single grid, so the angle hardly matters. Narrow streets: consider `streetWidths` rules turning `^service$` and small residential streets into lanes. Roof shapes and colours carry the look; check OSM for `roof:shape` coverage.
-- **Coastal cities** (Wellington, Lisbon, Rio): the sea comes from the elevation model's sea floor, and harbours mapped as `natural=water` are drawn too. Piers (`man_made=pier`) become timber decks.
+- **Coastal cities** (Wellington, Lisbon, Rio): the open sea comes from OSM's coastline. It is drawn with the land on its left and flood-filled within the model, with the elevation model's sea floor as a fallback. Harbours mapped as `natural=water` are drawn too, and piers (`man_made=pier`) become timber decks.
 - **Hilly cities** (San Francisco, Wellington, La Paz): terrain is automatic. Buildings sit on the lowest ground under their footprint, with stone foundations where the slope falls away.
 - **Skyscraper cities** (Hong Kong, Dubai, New York): the world grows as tall as the tallest building. Check that the towers have `height` tags; set `defaultHeight` higher (20–40) if most don't.
 - **Cities with sparse OSM buildings:** the model will be patchy. A data source (§5) or a mapping session pays off quickly.

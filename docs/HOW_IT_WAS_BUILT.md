@@ -88,7 +88,7 @@ The pipeline scripts decided whether to run with `import.meta.url === 'file://' 
 
 Melbourne-specific constants became a **city profile**. Then came everything needed for an arbitrary city:
 - **Getting started:** geocoding; `npm run city "<place>"`.
-- **Terrain:** the global elevation model, with sea from bathymetry and per-body water levels.
+- **Terrain:** the global elevation model, with the sea from OSM coastlines and per-body water levels.
 - **Generic data handling:**
   - road widths by class;
   - dominant-bearing grid estimation;
@@ -109,6 +109,7 @@ Melbourne-specific constants became a **city profile**. Then came everything nee
 |---|---|
 | Overpass servers rate-limit and time out, especially for big queries | Tiles over several servers at once, one query per server; cool-downs and re-queuing; a short declared timeout and default memory allowance (queries asking for more memory wait longer); an identifying User-Agent (anonymous clients get 429s) |
 | Parallel "hedged" requests made things *worse*: the servers count concurrent queries per user, and aborted queries keep running server-side | Replaced by the polite scheduler above |
+| Wellington's harbour came out as land: the elevation tiles have no sea floor there | The sea from OSM coastlines, flood-filled from their sea side, with bathymetry as the fallback |
 | The world origin was 60 m off | Use a real street intersection's coordinates |
 | Underground stations and tunnels drawn on the street | Skip `tunnel=*`, `location=underground`, negative `layer`/`level` |
 | Fallback OSM buildings standing on roads | Drop OSM-only buildings whose footprint is mostly carriageway |
