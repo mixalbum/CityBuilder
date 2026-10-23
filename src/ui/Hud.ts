@@ -22,6 +22,7 @@ const fmt = (h: number) => {
 /** Title, landmark jump list, time of day, load progress and data attribution. */
 export class Hud {
   private readonly progress: HTMLElement;
+  private readonly notice: HTMLElement;
   private readonly slider: HTMLInputElement;
   private readonly clock: HTMLElement;
   private readonly help: HTMLElement;
@@ -54,6 +55,7 @@ export class Hud {
         <button type="button" class="export" title="Download a MagicaVoxel .vox of the 240 m around the view">Export .vox</button>
       </div>
       <p class="progress"></p>
+      <p class="notice warn"></p>
       <p class="help"></p>
       <p class="attribution"></p>`;
     root.appendChild(el);
@@ -107,6 +109,7 @@ export class Hud {
 
     el.querySelector('.attribution')!.textContent = manifest.attribution;
     this.progress = el.querySelector('.progress')!;
+    this.notice = el.querySelector('.notice')!;
   }
 
   /** Reflect the current time in the slider and clock. */
@@ -119,6 +122,11 @@ export class Hud {
   showMode(mode: CameraMode): void {
     for (const b of this.modeButtons) b.classList.toggle('active', b.dataset.mode === mode);
     this.help.textContent = HELP[mode];
+  }
+
+  /** A lasting message under the progress line, e.g. a load problem. */
+  setNotice(text: string): void {
+    this.notice.textContent = text;
   }
 
   setProgress(loaded: number, total: number): void {

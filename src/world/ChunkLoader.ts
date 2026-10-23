@@ -178,13 +178,40 @@ export class ChunkLoader {
     await Promise.all(Array.from({ length: concurrency }, worker));
   }
 
+  /** Region files that could not be loaded even after retrying (drawn as empty). */
+  readonly failed: string[] = [];
+
+  /**
+   * A region file's chunks, retried with backoff: hosts and networks drop the
+   * odd request, and a truncated or wrong response (e.g. a dev server's
+   * index.html for a missing file) fails to parse.
+   */
+  private async fetchRegion(file: string, attempts = 4): Promise<RegionChunk[] | undefined> {
+    for (let i = 0; i < attempts; i++) {
+      if (i > 0) await new Promise((r) => setTimeout(r, 1000 * 2 ** (i - 1)));
+      try {
+        const res = await fetch(`${this.baseUrl}/${file}`);
+        if (res.ok) return readRegion(await res.arrayBuffer());
+        if (res.status === 404) break; // not worth retrying
+      } catch {
+        // network or format error: retry
+      }
+    }
+    return undefined;
+  }
+
   private async loadRegion(r: RegionState): Promise<void> {
-    const res = await fetch(`${this.baseUrl}/${r.info.file}`);
-    if (!res.ok) throw new Error(`Failed to load ${r.info.file}: HTTP ${res.status}`);
-    for (const c of readRegion(await res.arrayBuffer())) {
-      const k = chunkKey(c.cx, c.cy, c.cz);
-      this.rle.set(k, c.rle);
-      r.chunks.push(k);
+    const chunks = await this.fetchRegion(r.info.file);
+    if (chunks)
+      for (const c of chunks) {
+        const k = chunkKey(c.cx, c.cy, c.cz);
+        this.rle.set(k, c.rle);
+        r.chunks.push(k);
+      }
+    else {
+      // Carry on without it, so its neighbours still get drawn.
+      console.warn(`Could not load ${r.info.file}; that area is left empty`);
+      this.failed.push(r.info.file);
     }
     this.loaded.add(regionKey(r.info.rx, r.info.rz));
     // This region, or a neighbour waiting on it, may now be ready.
