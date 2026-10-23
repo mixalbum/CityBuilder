@@ -14,6 +14,25 @@ CityBuilder takes the map data for a place and builds a 1-metre voxel model you 
 
 Streets line up with the voxel grid, buildings get facades, roofs and rooftop clutter, the sun follows the city's real latitude, windows light up at night and trams run on their real routes.
 
+## See it live
+
+Open **https://mixalbum.github.io/CityBuilder/** in Chrome, Edge, Firefox or Safari. There's nothing to install.
+
+- **Pick a city** with the **City** menu in the panel, or open one directly: [Melbourne](https://mixalbum.github.io/CityBuilder/?city=melbourne) · [Wellington](https://mixalbum.github.io/CityBuilder/?city=wellington) · [Prague](https://mixalbum.github.io/CityBuilder/?city=prague).
+- **Set the time** with `&time=` in the address, e.g. [Wellington at night](https://mixalbum.github.io/CityBuilder/?city=wellington&time=21).
+- **Wait a moment:** a city fills in over 10–30 seconds, first in coarse blocks, then in full detail near the camera.
+
+| Key | Mode | Controls |
+|---|---|---|
+| **1** | Orbit | Drag to rotate · right-drag to pan · scroll to zoom |
+| **2** | Fly | W A S D to move · Q / E down and up · drag to look · Shift for speed |
+| **3** | Walk | W A S D to walk · Space to jump · drag to look · Shift to run |
+| **4** | Diorama | Isometric view · R to turn · drag to pan · scroll to zoom |
+
+**Jump to** flies to a landmark, **▶** runs the day/night cycle, **P** saves a PNG, and **H** hides the panel.
+
+It works on phones too, but it's best on a computer with a graphics card. If you see only a light-blue page, turn on hardware acceleration in your browser's settings. More in [USAGE.md](docs/USAGE.md).
+
 ![Melbourne, isometric diorama](docs/screenshots/melbourne/diorama.jpg)
 
 | Melbourne CBD | Southbank at dusk |
