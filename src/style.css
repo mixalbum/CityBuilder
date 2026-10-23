@@ -136,3 +136,7 @@ canvas {
   background: #f2c14e;
   color: #14181e;
 }
+
+.hud p:empty {
+  display: none;
+}

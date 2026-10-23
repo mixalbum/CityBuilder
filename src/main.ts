@@ -114,7 +114,12 @@ async function main(): Promise<void> {
   }
   loader.onProgress = (n, total) => hud.setProgress(n, total);
   hud.setProgress(0, manifest.regions.length);
-  loader.loadAll([ox, oz]).catch((err) => showError(app, `<h1>Load failed</h1><p>${String(err)}</p>`));
+  loader
+    .loadAll([ox, oz])
+    .then(() => {
+      if (loader.failed.length) hud.setNotice(`${loader.failed.length} area${loader.failed.length > 1 ? 's' : ''} failed to load: reload to try again`);
+    })
+    .catch((err) => showError(app, `<h1>Load failed</h1><p>${String(err)}</p>`));
 
   let trams: Trams | undefined;
   if (manifest.trams)
